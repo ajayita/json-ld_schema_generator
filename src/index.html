@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schema Snap - Free Local Business JSON-LD Generator | Schema.org Markup Tool</title>
+    <title>Free JSON-LD Generator | Schema.org Local Business Markup Tool</title>
     <meta name="description" content="Create valid Schema.org LocalBusiness JSON-LD structured data markup with our free online tool. Improve local SEO, boost search visibility, and generate rich snippets for your business.">
-    <meta name="keywords" content="JSON-LD generator, Schema.org markup, local business SEO, structured data, rich snippets, LocalBusiness schema, JSON-LD tool">
     <meta name="author" content="Tizona Digital Services">
-    <link rel="canonical" href="https://jsonldschemagenerator.tizonaseo.com">
+    <link rel="canonical" href="https://schemasnap.pages.dev">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,23 +14,96 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     
     <!-- Open Graph meta tags -->
-    <meta property="og:title" content="Schema Snap - Free Local Business JSON-LD Generator">
+    <meta property="og:title" content="Free JSON-LD Generator - Schema.org Local Business Markup">
     <meta property="og:description" content="Generate valid Schema.org LocalBusiness JSON-LD markup to improve your local SEO and search visibility">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://jsonldschemagenerator.tizonaseo.com">
+    <meta property="og:url" content="https://schemasnap.pages.dev">
     <meta property="og:site_name" content="Schema Snap">
     
     <!-- Twitter Card meta tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Schema Snap - Free Local Business JSON-LD Generator">
+    <meta name="twitter:title" content="Free JSON-LD Generator - Schema.org Local Business Markup">
     <meta name="twitter:description" content="Generate valid Schema.org LocalBusiness JSON-LD markup to improve your local SEO and search visibility">
     <link rel="stylesheet" href="styles/main.css">
+    
+    <!-- JSON-LD Schema Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Free JSON-LD Generator",
+        "alternateName": "Schema Snap",
+        "description": "Create valid Schema.org LocalBusiness JSON-LD structured data markup with our free online tool. Improve local SEO, boost search visibility, and generate rich snippets for your business.",
+        "url": "https://schemasnap.pages.dev",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "Tizona Digital Services",
+            "url": "https://tizonaseo.com"
+        },
+        "featureList": [
+            "Real-time JSON-LD preview",
+            "Schema.org validation",
+            "Geocoding integration",
+            "Multiple export formats",
+            "Auto-save functionality",
+            "Mobile responsive design"
+        ]
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What types of businesses can use this tool?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Schema Snap works for any local business including restaurants, retail stores, professional services, medical practices, automotive services, beauty salons, fitness centers, and more. The tool generates LocalBusiness schema markup that's suitable for businesses with physical locations."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Where do I add the generated JSON-LD code?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Add the generated JSON-LD code within the <head> section of your website's HTML. It should be wrapped in <script type=\"application/ld+json\"> tags. The code can be added to your homepage, contact page, or any page where your business information is displayed."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is the generated markup compliant with Schema.org standards?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, Schema Snap generates valid Schema.org LocalBusiness markup that follows current standards. The tool includes required properties like name, address, and telephone, plus optional properties for enhanced rich results."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is this tool completely free to use?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, Schema Snap is completely free to use. There are no usage limits, subscription fees, or hidden costs. This tool is provided by Tizona Digital Services to help businesses improve their local search presence."
+                }
+            }
+        ]
+    }
+    </script>
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <h1 class="logo">Schema Snap</h1>
-            <p class="tagline">Generate Local Business JSON-LD structured data markup</p>
+            <h1 class="logo">Free JSON-LD Generator</h1>
+            <p class="tagline">Create Schema.org Local Business structured data markup instantly</p>
         </div>
     </header>
 
@@ -48,7 +120,7 @@
 
                 <section class="export-section">
                     <div class="export-header">
-                        <h2>Export Your Schema</h2>
+                        <h2>Export JSON-LD Schema Markup</h2>
                         <div class="export-actions">
                             <button type="button" id="quickExportBtn" class="btn btn-success btn-large">
                                 🚀 Generate & Copy JSON-LD
@@ -64,10 +136,10 @@
     <!-- SEO Content Sections -->
     <section class="content-section what-is-jsonld">
         <div class="container">
-            <h2>What is JSON-LD?</h2>
+            <h2>What is JSON-LD Structured Data?</h2>
             <p>JSON-LD (JavaScript Object Notation for Linked Data) is a method of encoding structured data using JSON. It's a W3C standard that allows search engines like Google, Bing, and Yahoo to better understand your website content and display rich results in search engine results pages (SERPs).</p>
             
-            <h3>Key Features of JSON-LD:</h3>
+            <h3>Benefits of JSON-LD for SEO:</h3>
             <ul>
                 <li><strong>Human-readable:</strong> Easy to read and write compared to other structured data formats</li>
                 <li><strong>Schema.org compatible:</strong> Works seamlessly with Schema.org vocabulary</li>
@@ -79,10 +151,10 @@
 
     <section class="content-section why-structured-data">
         <div class="container">
-            <h2>Why Use Structured Data for Local Businesses?</h2>
+            <h2>Why Local Businesses Need Schema.org Markup</h2>
             <p>Structured data markup helps search engines understand your business information, leading to better visibility and enhanced search results that can drive more customers to your business.</p>
             
-            <h3>Benefits of Local Business Schema Markup:</h3>
+            <h3>Schema Markup Benefits for Local SEO:</h3>
             <div class="benefits-grid">
                 <div class="benefit-item">
                     <h4>🎯 Enhanced Search Visibility</h4>
@@ -106,35 +178,35 @@
 
     <section class="content-section how-to-use">
         <div class="container">
-            <h2>How to Use Schema Snap</h2>
+            <h2>How to Generate JSON-LD Schema in 4 Steps</h2>
             <p>Our free JSON-LD generator makes it easy to create valid Schema.org markup for your local business in just a few simple steps:</p>
             
             <div class="steps-container">
                 <div class="step">
                     <div class="step-number">1</div>
                     <div class="step-content">
-                        <h3>Enter Business Information</h3>
+                        <h3>1. Enter Business Details</h3>
                         <p>Fill in your business name, type, description, and contact details. All fields are validated in real-time to ensure accuracy.</p>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
                     <div class="step-content">
-                        <h3>Add Location Details</h3>
+                        <h3>2. Add Business Location</h3>
                         <p>Enter your business address. Our geocoding integration will automatically generate coordinates for precise location mapping.</p>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
                     <div class="step-content">
-                        <h3>Set Business Hours</h3>
+                        <h3>3. Configure Opening Hours</h3>
                         <p>Configure your opening hours for each day of the week. Support for multiple time ranges per day and special holiday hours.</p>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number">4</div>
                     <div class="step-content">
-                        <h3>Export Your Schema</h3>
+                        <h3>4. Download Schema Markup</h3>
                         <p>Copy the generated JSON-LD code or download it as a file. Then add it to your website's HTML head section.</p>
                     </div>
                 </div>
@@ -144,7 +216,7 @@
 
     <section class="content-section faq">
         <div class="container">
-            <h2>Frequently Asked Questions</h2>
+            <h2>JSON-LD Generator FAQ</h2>
             
             <div class="faq-container">
                 <div class="faq-item">
@@ -187,7 +259,7 @@
 
     <section class="content-section features">
         <div class="container">
-            <h2>Schema Snap Features</h2>
+            <h2>Free JSON-LD Generator Features</h2>
             <p>Everything you need to create professional Schema.org markup for your local business:</p>
             
             <div class="features-grid">
