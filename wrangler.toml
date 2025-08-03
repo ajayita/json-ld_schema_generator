@@ -1,0 +1,14 @@
+name = "schema-snap"
+compatibility_date = "2024-01-01"
+
+[env.production]
+route = "jsonldschemagenerator.tizonaseo.com/*"
+
+[[env.production.routes]]
+pattern = "jsonldschemagenerator.tizonaseo.com/*"
+zone_name = "tizonaseo.com"
+
+[build]
+command = "npm run build"
+cwd = "."
+publish = "dist"
