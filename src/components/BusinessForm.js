@@ -181,8 +181,9 @@ export class BusinessForm {
         const priceRanges = this.getPriceRanges();
 
         this.container.innerHTML = `
+            <!-- Business Information Card -->
             <div class="card">
-                <h3>Business Information</h3>
+                <h3>🏢 Business Information</h3>
                 
                 <div class="form-group required">
                     <label for="businessName">Business Name</label>
@@ -225,8 +226,9 @@ export class BusinessForm {
                 </div>
             </div>
 
+            <!-- Contact Information Card -->
             <div class="card">
-                <h3>Contact Information</h3>
+                <h3>📞 Contact Information</h3>
                 
                 <div class="form-group required">
                     <label for="phone">Phone Number</label>
@@ -252,8 +254,9 @@ export class BusinessForm {
                 </div>
             </div>
 
+            <!-- Location Card -->
             <div class="card">
-                <h3>Location</h3>
+                <h3>📍 Location</h3>
                 
                 <div class="form-group required">
                     <label for="streetAddress">Street Address</label>
@@ -304,7 +307,7 @@ export class BusinessForm {
                 </div>
 
                 <div class="form-group">
-                    <label>Coordinates (Optional)</label>
+                    <label>🌍 Coordinates (Optional)</label>
                     <div class="geo-controls">
                         <div class="form-row">
                             <div class="form-group">
@@ -319,28 +322,40 @@ export class BusinessForm {
                             </div>
                         </div>
                         <button type="button" id="useLocationBtn" class="btn btn-outline btn-small">
-                            Use My Location
+                            📍 Use My Location
                         </button>
                     </div>
                     <div id="coordinatesDisplay" class="coordinates-display" style="display: none;"></div>
                 </div>
             </div>
 
+            <!-- Opening Hours Card -->
             <div class="card">
-                <h3>Opening Hours (Optional)</h3>
-                <div id="openingHours">
-                    ${this.renderOpeningHours()}
-                </div>
+                <h3>🕰️ Opening Hours</h3>
+                
                 <div class="form-group">
-                    <label>
+                    <label class="checkbox-label">
                         <input type="checkbox" id="open24Hours" name="open24Hours"> 
+                        <span class="checkmark"></span>
                         Open 24/7
                     </label>
                 </div>
+                
+                <div class="hours-section" id="openingHours">
+                    ${this.renderOpeningHours()}
+                </div>
             </div>
 
+            <!-- Form Actions Card -->
             <div class="card">
-                <button type="button" id="clearFormBtn" class="btn btn-secondary">Clear Form</button>
+                <div class="form-actions">
+                    <button type="button" id="clearFormBtn" class="btn btn-outline">
+                        🗑️ Clear Form
+                    </button>
+                    <button type="button" id="loadExampleBtn" class="btn btn-secondary">
+                        📝 Load Example
+                    </button>
+                </div>
             </div>
         `;
     }
@@ -349,16 +364,28 @@ export class BusinessForm {
      * Render opening hours interface
      */
     renderOpeningHours() {
-        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const days = [
+            { key: 'monday', label: 'Monday', emoji: '🔅' },
+            { key: 'tuesday', label: 'Tuesday', emoji: '🔆' },
+            { key: 'wednesday', label: 'Wednesday', emoji: '🔇' },
+            { key: 'thursday', label: 'Thursday', emoji: '🔈' },
+            { key: 'friday', label: 'Friday', emoji: '🔉' },
+            { key: 'saturday', label: 'Saturday', emoji: '🔊' },
+            { key: 'sunday', label: 'Sunday', emoji: '🔋' }
+        ];
         
         return days.map(day => `
-            <div class="hours-group">
-                <label>
-                    <input type="checkbox" class="hours-checkbox" data-day="${day.toLowerCase()}">
-                    ${day}
+            <div class="hours-group" data-day="${day.key}">
+                <label class="day-label">
+                    <input type="checkbox" class="hours-checkbox" data-day="${day.key}">
+                    <span class="checkmark"></span>
+                    <span class="day-name">${day.emoji} ${day.label}</span>
                 </label>
-                <input type="time" class="hours-time" data-day="${day.toLowerCase()}" data-type="open" disabled>
-                <input type="time" class="hours-time" data-day="${day.toLowerCase()}" data-type="close" disabled>
+                <div class="time-inputs">
+                    <input type="time" class="hours-time" data-day="${day.key}" data-type="open" disabled value="09:00">
+                    <span class="time-separator">to</span>
+                    <input type="time" class="hours-time" data-day="${day.key}" data-type="close" disabled value="17:00">
+                </div>
                 <span class="hours-closed">Closed</span>
             </div>
         `).join('');
@@ -460,18 +487,24 @@ export class BusinessForm {
                 const timeInputs = this.container.querySelectorAll(`[data-day="${day}"][data-type]`);
                 const closedLabel = e.target.closest('.hours-group').querySelector('.hours-closed');
                 
+                const hoursGroup = e.target.closest('.hours-group');
+                
                 if (e.target.checked) {
                     timeInputs.forEach(input => {
                         input.disabled = false;
-                        input.value = input.dataset.type === 'open' ? '09:00' : '17:00';
+                        if (!input.value) {
+                            input.value = input.dataset.type === 'open' ? '09:00' : '17:00';
+                        }
                     });
                     closedLabel.style.display = 'none';
+                    hoursGroup.classList.add('active');
                 } else {
                     timeInputs.forEach(input => {
                         input.disabled = true;
                         input.value = '';
                     });
-                    closedLabel.style.display = 'inline';
+                    closedLabel.style.display = 'block';
+                    hoursGroup.classList.remove('active');
                 }
             });
         });
@@ -480,7 +513,17 @@ export class BusinessForm {
         const open24Hours = this.container.querySelector('#open24Hours');
         open24Hours.addEventListener('change', (e) => {
             const hoursSection = this.container.querySelector('#openingHours');
-            hoursSection.style.display = e.target.checked ? 'none' : 'block';
+            if (e.target.checked) {
+                hoursSection.style.display = 'none';
+                // Uncheck all day checkboxes
+                this.container.querySelectorAll('.hours-checkbox').forEach(cb => {
+                    cb.checked = false;
+                    const hoursGroup = cb.closest('.hours-group');
+                    hoursGroup.classList.remove('active');
+                });
+            } else {
+                hoursSection.style.display = 'block';
+            }
         });
 
         // Use my location button
@@ -490,6 +533,10 @@ export class BusinessForm {
         // Clear form button
         const clearFormBtn = this.container.querySelector('#clearFormBtn');
         clearFormBtn.addEventListener('click', () => this.clearForm());
+        
+        // Load example button
+        const loadExampleBtn = this.container.querySelector('#loadExampleBtn');
+        loadExampleBtn.addEventListener('click', () => this.loadExample());
 
         // Update postal code validation when country changes
         const countrySelect = this.container.querySelector('#country');
@@ -664,8 +711,8 @@ export class BusinessForm {
     /**
      * Clear form and storage
      */
-    clearForm() {
-        if (confirm('Are you sure you want to clear all form data?')) {
+    clearForm(confirm = true) {
+        if (!confirm || window.confirm('Are you sure you want to clear all form data?')) {
             this.container.querySelectorAll('input, select, textarea').forEach(field => {
                 if (field.type === 'checkbox') {
                     field.checked = false;
@@ -811,9 +858,229 @@ export class BusinessForm {
     }
 
     /**
+     * Load example business data
+     */
+    loadExample() {
+        if (confirm('This will replace your current form data with example data. Continue?')) {
+            const exampleData = {
+                businessName: 'The Coffee Corner',
+                businessType: 'Restaurant',
+                description: 'Cozy neighborhood coffee shop serving artisanal coffee, fresh pastries, and light meals in a warm, welcoming atmosphere.',
+                phone: '(555) 123-4567',
+                website: 'https://www.thecoffeecorner.com',
+                email: 'hello@thecoffeecorner.com',
+                streetAddress: '123 Main Street',
+                city: 'Downtown',
+                state: 'CA',
+                postalCode: '90210',
+                country: 'US',
+                priceRange: '$$',
+                latitude: '34.052235',
+                longitude: '-118.243685',
+                openingHours: {
+                    monday: { open: '07:00', close: '19:00' },
+                    tuesday: { open: '07:00', close: '19:00' },
+                    wednesday: { open: '07:00', close: '19:00' },
+                    thursday: { open: '07:00', close: '19:00' },
+                    friday: { open: '07:00', close: '20:00' },
+                    saturday: { open: '08:00', close: '20:00' },
+                    sunday: { open: '08:00', close: '18:00' }
+                }
+            };
+            
+            this.populateForm(exampleData);
+            this.showMessage('Example data loaded successfully!', 'success');
+        }
+    }
+    
+    /**
+     * Populate form with data
+     */
+    populateForm(data) {
+        // Clear form first
+        this.clearForm(false);
+        
+        // Populate basic fields
+        Object.keys(data).forEach(key => {
+            if (key === 'openingHours') return;
+            
+            const field = this.container.querySelector(`[name="${key}"]`);
+            if (field) {
+                if (field.type === 'checkbox') {
+                    field.checked = data[key];
+                } else {
+                    field.value = data[key] || '';
+                }
+                
+                // Trigger change event for validation and callbacks
+                field.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+        
+        // Update state options based on country
+        this.updateStateOptions();
+        
+        // Set state value after country is updated
+        if (data.state) {
+            const stateSelect = this.container.querySelector('#stateSelect');
+            const stateText = this.container.querySelector('#stateText');
+            const activeField = stateSelect.style.display !== 'none' ? stateSelect : stateText;
+            activeField.value = data.state;
+        }
+        
+        // Populate opening hours
+        if (data.openingHours) {
+            Object.keys(data.openingHours).forEach(day => {
+                const checkbox = this.container.querySelector(`[data-day="${day}"]`);
+                const openInput = this.container.querySelector(`[data-day="${day}"][data-type="open"]`);
+                const closeInput = this.container.querySelector(`[data-day="${day}"][data-type="close"]`);
+                const hoursGroup = checkbox?.closest('.hours-group');
+                
+                if (checkbox && openInput && closeInput && hoursGroup) {
+                    checkbox.checked = true;
+                    openInput.disabled = false;
+                    closeInput.disabled = false;
+                    openInput.value = data.openingHours[day].open;
+                    closeInput.value = data.openingHours[day].close;
+                    
+                    const closedLabel = hoursGroup.querySelector('.hours-closed');
+                    if (closedLabel) {
+                        closedLabel.style.display = 'none';
+                    }
+                    hoursGroup.classList.add('active');
+                }
+            });
+        }
+        
+        // Update character counter
+        const descriptionField = this.container.querySelector('#description');
+        const charCount = this.container.querySelector('.char-count');
+        if (descriptionField && charCount) {
+            charCount.textContent = `${descriptionField.value.length}/160 characters`;
+        }
+        
+        // Update coordinates display
+        if (data.latitude && data.longitude) {
+            const display = this.container.querySelector('#coordinatesDisplay');
+            if (display) {
+                display.textContent = `Coordinates: ${data.latitude}, ${data.longitude}`;
+                display.style.display = 'block';
+            }
+        }
+        
+        // Save to storage and trigger callbacks
+        this.saveToStorage();
+        if (this.onChangeCallback) {
+            this.onChangeCallback(this.getFormData());
+        }
+    }
+    
+    /**
+     * Show message to user
+     */
+    showMessage(message, type = 'info') {
+        // Create message element
+        const messageEl = document.createElement('div');
+        messageEl.className = `message ${type}`;
+        messageEl.textContent = message;
+        messageEl.style.cssText = `
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            animation: slideInMessage 0.3s ease-out;
+        `;
+        
+        // Add type-specific styling
+        if (type === 'success') {
+            messageEl.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            messageEl.style.color = 'white';
+        } else if (type === 'error') {
+            messageEl.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            messageEl.style.color = 'white';
+        }
+        
+        document.body.appendChild(messageEl);
+        
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+            messageEl.style.animation = 'slideOutMessage 0.3s ease-in';
+            setTimeout(() => messageEl.remove(), 300);
+        }, 3000);
+    }
+
+    /**
      * Set change callback
      */
     onChange(callback) {
         this.onChangeCallback = callback;
+    }
+
+    /**
+     * Load form data from localStorage
+     */
+    loadFromStorage() {
+        try {
+            const saved = localStorage.getItem('schemasnap-form-data');
+            return saved ? JSON.parse(saved) : {};
+        } catch (error) {
+            console.warn('Failed to load form data from storage:', error);
+            return {};
+        }
+    }
+
+    /**
+     * Save form data to localStorage
+     */
+    saveToStorage() {
+        try {
+            const formData = this.getFormData();
+            localStorage.setItem('schemasnap-form-data', JSON.stringify(formData));
+        } catch (error) {
+            console.warn('Failed to save form data to storage:', error);
+        }
+    }
+
+    /**
+     * Restore form data from storage
+     */
+    restoreFormData() {
+        if (this.data && Object.keys(this.data).length > 0) {
+            // Set form values from stored data
+            Object.entries(this.data).forEach(([key, value]) => {
+                const field = this.container.querySelector(`[name="${key}"]`);
+                if (field) {
+                    if (field.type === 'checkbox') {
+                        field.checked = Boolean(value);
+                    } else {
+                        field.value = value;
+                    }
+                }
+            });
+
+            // Update dependent fields
+            this.updateStateOptions();
+            
+            // Show restoration message
+            if (Object.keys(this.data).length > 3) {
+                this.showMessage('Previous form data restored automatically', 'success');
+            }
+        }
+    }
+
+    /**
+     * Clear stored form data
+     */
+    clearStorage() {
+        try {
+            localStorage.removeItem('schemasnap-form-data');
+            this.data = {};
+        } catch (error) {
+            console.warn('Failed to clear form data from storage:', error);
+        }
     }
 }

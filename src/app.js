@@ -183,6 +183,39 @@ class SchemaSnapApp {
     }
 
     /**
+     * Handle quick export button click
+     */
+    handleQuickExport() {
+        try {
+            const formData = this.components.form?.getFormData();
+            if (!formData || Object.keys(formData).length === 0) {
+                this.showErrorMessage('Please fill out the business form first before exporting.');
+                return;
+            }
+
+            // Check if we have at least the minimum required data
+            if (!formData.businessName) {
+                this.showErrorMessage('Please enter a business name before exporting.');
+                return;
+            }
+
+            // Generate and copy JSON-LD
+            const jsonLd = JsonLdGenerator.generate(formData);
+            const jsonString = JsonLdGenerator.format(jsonLd);
+            
+            navigator.clipboard.writeText(jsonString).then(() => {
+                this.showSuccessMessage('JSON-LD copied to clipboard! ✅ Ready to paste into your website.');
+            }).catch(() => {
+                this.showErrorMessage('Failed to copy to clipboard. Please try using the export controls below.');
+            });
+
+        } catch (error) {
+            console.error('Quick export error:', error);
+            this.showErrorMessage('Failed to generate JSON-LD. Please check your form data.');
+        }
+    }
+
+    /**
      * Setup global event listeners
      */
     setupGlobalEventListeners() {
@@ -212,6 +245,14 @@ class SchemaSnapApp {
             console.error('Global error:', e.error);
             this.showErrorMessage('An unexpected error occurred. Please try again.');
         });
+
+        // Quick export button handler
+        const quickExportBtn = document.getElementById('quickExportBtn');
+        if (quickExportBtn) {
+            quickExportBtn.addEventListener('click', () => {
+                this.handleQuickExport();
+            });
+        }
 
         // Service worker registration (if available)
         if ('serviceWorker' in navigator) {

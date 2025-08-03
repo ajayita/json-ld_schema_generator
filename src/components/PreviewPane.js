@@ -12,39 +12,85 @@ export class PreviewPane {
      */
     render() {
         this.container.innerHTML = `
+            <!-- Real-time Preview Card -->
             <div class="card">
                 <div class="preview-header">
-                    <div class="preview-info">
-                        <span id="validationStatus" class="validation-status"></span>
-                        <span id="completenessScore" class="completeness-score"></span>
+                    <div class="preview-title">
+                        <h3>📝 Live JSON-LD Preview</h3>
+                        <div class="preview-info">
+                            <span id="validationStatus" class="validation-status"></span>
+                            <span id="completenessScore" class="completeness-score"></span>
+                        </div>
                     </div>
                     <div class="preview-controls">
-                        <button type="button" id="expandBtn" class="btn btn-small btn-outline">Expand All</button>
-                        <button type="button" id="validateBtn" class="btn btn-small btn-outline">Validate</button>
+                        <button type="button" id="expandBtn" class="btn btn-small btn-outline">
+                            🔍 Expand
+                        </button>
+                        <button type="button" id="validateBtn" class="btn btn-small btn-primary">
+                            ✓ Validate
+                        </button>
+                        <button type="button" id="refreshBtn" class="btn btn-small btn-outline">
+                            🔄 Refresh
+                        </button>
                     </div>
                 </div>
                 
                 <div class="preview-stats">
                     <div class="stat-item">
-                        <span class="stat-label">Characters:</span>
+                        <span class="stat-label">Characters</span>
                         <span id="charCount" class="stat-value">0</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label">Size:</span>
+                        <span class="stat-label">Size</span>
                         <span id="fileSize" class="stat-value">0 B</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label">Lines:</span>
+                        <span class="stat-label">Lines</span>
                         <span id="lineCount" class="stat-value">0</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label">Properties:</span>
+                        <span class="stat-label">Properties</span>
                         <span id="propertyCount" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Validity</span>
+                        <span id="validityStatus" class="stat-value">-</span>
+                    </div>
+                </div>
+                
+                <div class="preview-toolbar">
+                    <div class="preview-mode">
+                        <label class="radio-label">
+                            <input type="radio" name="previewMode" value="formatted" checked>
+                            <span class="radio-mark"></span>
+                            Formatted
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="previewMode" value="minified">
+                            <span class="radio-mark"></span>
+                            Minified
+                        </label>
+                    </div>
+                    <div class="preview-actions">
+                        <button type="button" id="copyPreviewBtn" class="btn btn-small btn-success">
+                            📋 Copy JSON
+                        </button>
                     </div>
                 </div>
                 
                 <div id="previewContainer" class="preview-container">
-                    <pre id="jsonPreview" class="json-preview"></pre>
+                    <div class="preview-placeholder">
+                        <div class="placeholder-icon">🚀</div>
+                        <h4>Ready to Generate!</h4>
+                        <p>Fill out the business information form to see your JSON-LD structured data appear here in real-time.</p>
+                        <div class="placeholder-features">
+                            <span class="feature">✓ Live Preview</span>
+                            <span class="feature">✓ Syntax Highlighting</span>
+                            <span class="feature">✓ Validation</span>
+                            <span class="feature">✓ Export Ready</span>
+                        </div>
+                    </div>
+                    <pre id="jsonPreview" class="json-preview" style="display: none;"></pre>
                 </div>
                 
                 <div id="validationResults" class="validation-results" style="display: none;">
@@ -64,9 +110,18 @@ export class PreviewPane {
     setupEventListeners() {
         const expandBtn = this.container.querySelector('#expandBtn');
         const validateBtn = this.container.querySelector('#validateBtn');
+        const refreshBtn = this.container.querySelector('#refreshBtn');
+        const copyPreviewBtn = this.container.querySelector('#copyPreviewBtn');
+        const previewModeRadios = this.container.querySelectorAll('input[name="previewMode"]');
 
         expandBtn.addEventListener('click', () => this.toggleExpanded());
         validateBtn.addEventListener('click', () => this.showValidation());
+        refreshBtn.addEventListener('click', () => this.updatePreview(this.currentData));
+        copyPreviewBtn.addEventListener('click', () => this.copyCurrentPreview());
+        
+        previewModeRadios.forEach(radio => {
+            radio.addEventListener('change', () => this.updatePreview(this.currentData));
+        });
     }
 
     /**
@@ -75,10 +130,36 @@ export class PreviewPane {
     updatePreview(formData) {
         this.currentData = formData;
         const jsonLd = JsonLdGenerator.generate(formData);
-        const formatted = JsonLdGenerator.format(jsonLd);
+        
+        // Check if we have meaningful data
+        const hasData = Object.keys(formData).length > 0 && 
+                       (formData.businessName || formData.phone || formData.streetAddress);
+        
+        const placeholder = this.container.querySelector('.preview-placeholder');
+        const jsonPreview = this.container.querySelector('#jsonPreview');
+        
+        if (!hasData) {
+            // Show placeholder
+            placeholder.style.display = 'block';
+            jsonPreview.style.display = 'none';
+            this.updateStats('', {});
+            this.updateStatus({});
+            this.updateCompletenessScore({});
+            return;
+        }
+        
+        // Hide placeholder and show preview
+        placeholder.style.display = 'none';
+        jsonPreview.style.display = 'block';
+        
+        // Get preview mode
+        const previewMode = this.container.querySelector('input[name="previewMode"]:checked').value;
+        const jsonString = previewMode === 'minified' 
+            ? JsonLdGenerator.minify(jsonLd)
+            : JsonLdGenerator.format(jsonLd);
         
         // Update JSON preview with syntax highlighting
-        this.renderHighlightedJson(formatted);
+        this.renderHighlightedJson(jsonString);
         
         // Update status indicators
         this.updateStatus(jsonLd);
@@ -87,7 +168,7 @@ export class PreviewPane {
         this.updateCompletenessScore(jsonLd);
         
         // Update character count and stats
-        this.updateStats(formatted, jsonLd);
+        this.updateStats(jsonString, jsonLd);
     }
 
     /**
@@ -133,22 +214,29 @@ export class PreviewPane {
      */
     updateStatus(jsonLd) {
         const statusElement = this.container.querySelector('#validationStatus');
+        const validityElement = this.container.querySelector('#validityStatus');
+        
+        if (!jsonLd || Object.keys(jsonLd).length <= 2) {
+            statusElement.innerHTML = '<span class="status-indicator status-warning">Waiting for data</span>';
+            validityElement.textContent = '-';
+            validityElement.className = 'stat-value';
+            return;
+        }
+        
         const validation = JsonLdGenerator.validate(jsonLd);
         
         if (validation.isValid) {
-            statusElement.innerHTML = `
-                <span class="status-indicator status-valid">✓ Valid Schema</span>
-            `;
+            statusElement.innerHTML = '<span class="status-indicator status-valid">✓ Valid Schema</span>';
+            validityElement.textContent = 'Valid';
+            validityElement.className = 'stat-value stat-good';
         } else {
-            statusElement.innerHTML = `
-                <span class="status-indicator status-invalid">⚠ ${validation.errors.length} Error(s)</span>
-            `;
+            statusElement.innerHTML = `<span class="status-indicator status-invalid">⚠ ${validation.errors.length} Error(s)</span>`;
+            validityElement.textContent = 'Invalid';
+            validityElement.className = 'stat-value stat-warning';
         }
         
         if (validation.warnings.length > 0) {
-            statusElement.innerHTML += `
-                <span class="status-indicator status-warning">${validation.warnings.length} Warning(s)</span>
-            `;
+            statusElement.innerHTML += `<span class="status-indicator status-warning">${validation.warnings.length} Warning(s)</span>`;
         }
     }
 
@@ -157,15 +245,27 @@ export class PreviewPane {
      */
     updateCompletenessScore(jsonLd) {
         const scoreElement = this.container.querySelector('#completenessScore');
+        
+        if (!jsonLd || Object.keys(jsonLd).length <= 2) {
+            scoreElement.innerHTML = '<span class="completeness-score score-low">Completeness: 0%</span>';
+            return;
+        }
+        
         const score = JsonLdGenerator.getCompletenessScore(jsonLd);
         
         let scoreClass = 'score-low';
-        if (score >= 80) scoreClass = 'score-high';
-        else if (score >= 60) scoreClass = 'score-medium';
+        let emoji = '🔴';
+        if (score >= 80) {
+            scoreClass = 'score-high';
+            emoji = '🟢';
+        } else if (score >= 60) {
+            scoreClass = 'score-medium';
+            emoji = '🟡';
+        }
         
         scoreElement.innerHTML = `
             <span class="completeness-score ${scoreClass}">
-                Completeness: ${score}%
+                ${emoji} ${score}% Complete
             </span>
         `;
     }

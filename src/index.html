@@ -9,6 +9,11 @@
     <meta name="author" content="Tizona Digital Services">
     <link rel="canonical" href="https://jsonldschemagenerator.tizonaseo.com">
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <!-- Open Graph meta tags -->
     <meta property="og:title" content="Schema Snap - Free Local Business JSON-LD Generator">
     <meta property="og:description" content="Generate valid Schema.org LocalBusiness JSON-LD markup to improve your local SEO and search visibility">
@@ -34,17 +39,22 @@
         <div class="container">
             <div class="app-layout">
                 <section class="form-section">
-                    <h2>Business Information</h2>
                     <div id="business-form"></div>
                 </section>
 
                 <section class="preview-section">
-                    <h2>JSON-LD Preview</h2>
                     <div id="preview-pane"></div>
                 </section>
 
                 <section class="export-section">
-                    <h2>Export Options</h2>
+                    <div class="export-header">
+                        <h2>Export Your Schema</h2>
+                        <div class="export-actions">
+                            <button type="button" id="quickExportBtn" class="btn btn-success btn-large">
+                                🚀 Generate & Copy JSON-LD
+                            </button>
+                        </div>
+                    </div>
                     <div id="export-controls"></div>
                 </section>
             </div>
