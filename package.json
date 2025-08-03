@@ -1,0 +1,29 @@
+{
+  "name": "schema-snap",
+  "version": "1.0.0",
+  "description": "Local Business JSON-LD Generator",
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "python3 -m http.server 8000 --directory src",
+    "test": "node tests/run-tests.js",
+    "test:browser": "python3 -m http.server 8001 --directory tests",
+    "dev": "python3 -m http.server 8000 --directory src",
+    "lint": "echo 'No linting configured yet'",
+    "validate": "echo 'No validation configured yet'"
+  },
+  "keywords": [
+    "json-ld",
+    "schema.org",
+    "local-business",
+    "structured-data",
+    "seo"
+  ],
+  "author": "Schema Snap Team",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
